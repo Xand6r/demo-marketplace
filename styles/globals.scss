@@ -1,0 +1,34 @@
+@import "./variables.scss";
+@import 'react-toastify/dist/ReactToastify.css';
+
+
+html{
+  font-size: 16px;
+}
+.ant-spin-nested-loading{
+  width: 100%;
+}
+.ant-spin-text{
+  margin-top: 40px;
+  font-size: 24px;
+}
+
+.ant-spin-spinning{
+  margin-top: 50px;
+}
+
+ul.ant-menu{
+  height: calc(100vh - 150px);
+}
+
+h4.ant-typography{
+  margin-bottom: 0 !important;
+}
+
+.ant-modal-footer{
+  display: none !important;
+}
+
+.ant-list .ant-list-item .ant-list-item-meta {
+  align-items: center !important;
+}

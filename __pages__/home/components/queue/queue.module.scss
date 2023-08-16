@@ -1,0 +1,31 @@
+.queuewrapper{
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    div{
+        position: relative;
+        padding: 20px 20px;
+        margin-top: 30px;
+        border: 1px solid rgba(5, 5, 5, 0.06);
+        cursor: pointer;
+        span{
+            display: inline-block;
+            margin: 0 3px;
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+
+        b{
+            display: inline-block;
+            position: absolute;
+            top: 37px;
+            right: 10px;
+            top: 6px;
+            span{
+                text-transform: lowercase;
+                font-size: 9px !important;
+            }
+        }
+    }
+}

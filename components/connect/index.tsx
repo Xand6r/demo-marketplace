@@ -17,6 +17,7 @@ const ConnectButton: NextPage = () => {
         size="large"
         disabled={active}
         onClick={connectWalletPressed}
+        style={{color:"white"}}
       >
         {active && account && account.length > 0 ? (
           account.slice(0, 4) + '......' + account.slice(38)

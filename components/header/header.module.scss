@@ -5,11 +5,12 @@
     justify-content: space-between;
     padding-left: 40px;
     padding: 30px $desktop-padding-x;
+    background: #001529;
 
     & > span{
         position: relative;
-        width: 180px;
-        height: 50px;
+        width: 44px;
+        height: 44px;
     }
 
     img{

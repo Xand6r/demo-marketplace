@@ -5,41 +5,48 @@
 html{
   font-size: 16px;
 }
+
 .ant-menu.ant-menu-root{
-  // padding-top: 120px;
+  padding: 15px 10px !important;
+  height: 100%;
 }
+
 body{
   padding: 0;
   margin: 0;
 }
-.ant-spin-nested-loading{
-  width: 100%;
-}
-.ant-spin-text{
-  margin-top: 40px;
-  font-size: 24px;
-}
 
-.ant-spin-spinning{
-  margin-top: 50px;
+canvas.identicon{
+  border-radius: 50%;
 }
+// .ant-spin-nested-loading{
+//   width: 100%;
+// }
+// .ant-spin-text{
+//   margin-top: 40px;
+//   font-size: 24px;
+// }
+
+// .ant-spin-spinning{
+//   margin-top: 50px;
+// }
 
 ul.ant-menu{
-  height: calc(100vh - 150px);
+  min-height: calc(100vh - 83px);
 }
 
-h4.ant-typography{
-  margin-bottom: 0 !important;
-}
+// h4.ant-typography{
+//   margin-bottom: 0 !important;
+// }
 
-.ant-modal-footer{
-  display: none !important;
-}
+// .ant-modal-footer{
+//   display: none !important;
+// }
 
-.ant-list .ant-list-item .ant-list-item-meta {
-  align-items: center !important;
-}
+// .ant-list .ant-list-item .ant-list-item-meta {
+//   align-items: center !important;
+// }
 
-.layoutcontent{
-  padding: 5px 50px;
-}
+// .layoutcontent{
+//   padding: 5px 50px;
+// }

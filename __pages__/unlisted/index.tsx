@@ -1,23 +1,24 @@
 import { Card } from 'antd';
-import { postReq } from 'api';
+import { getReq, postReq } from 'api';
 import { Button, Space } from 'antd';
 import type { NextPage } from 'next';
-import styles from './home.module.scss';
+import styles from './unlisted.module.scss';
 import { Image, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import Blockies from 'react-blockies';
 import { Pagination } from 'antd';
 import { Spin } from 'antd';
-import { ethers } from 'ethers';
-import { getMarketplaceContract, getMinterContract } from 'utils/contracts';
 import { useWeb3React } from '@web3-react/core';
+import { getMarketplaceContract, getMinterContract } from 'utils/contracts';
+import { ethers } from 'ethers';
 
 const { Meta } = Card;
 const antIcon = <LoadingOutlined style={{ fontSize: 42 }} spin />;
 
-const Home: NextPage = () => {
+const Unlisted: NextPage = () => {
   const { account, chainId, library } = useWeb3React();
+
   const [fetchedPosts, setFecthedPosts] = useState<any>({ docs: [] });
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -25,14 +26,14 @@ const Home: NextPage = () => {
     limit: 10
   });
 
-  async function fetchWagers() {
-    if (loading) return;
+  async function fetchNFTs() {
+    if (loading || !account) return;
     window.scrollTo({ top: 0 });
     setLoading(true);
     try {
-      const { data: response } = await postReq('/bets/all', {
-        ...pagination
-      });
+      const { data: response } = await getReq(
+        `/marketplace/unlisted?address=${account}&page=${pagination.page}&limit=${pagination.limit}`
+      );
       setFecthedPosts(response.data);
     } catch (err: any) {
       alert(`error loading data: ${err.message}`);
@@ -42,39 +43,34 @@ const Home: NextPage = () => {
   }
 
   const buyNFT = async (post: any) => {
-    const marketContract = getMarketplaceContract(
-      `${chainId}`,
-      library.getSigner()
-    );
+    const tokenId = post.nft.tokenId;
 
+    const minterContract = getMinterContract(`${chainId}`, library.getSigner());
+    const tokenIdSignature = await library.getSigner().signMessage(tokenId);
+    const tokenPrice = 0.05 * 10 ** 18; //hardcode token price
     setLoading(true);
-
     try {
-      const buyTx = await marketContract.buyNFT(post.nft.tokenId, {
-        value: post.marketplace.price
+      const tx = await minterContract.listNFT(tokenId, `${tokenPrice}`);
+      await tx.wait();
+      const { hash: blockHash } = tx;
+      const response = await postReq('/marketplace/listnft', {
+        price: `${tokenPrice}`,
+        approvalTransactionHash: blockHash,
+        tokenId: tokenId,
+        address: account,
+        tokenIdSgnature: tokenIdSignature
       });
-      const { hash: blockHash } = buyTx;
-      const signature = await library.getSigner().signMessage(blockHash);
-      await buyTx.wait();
-
-      const payload = {
-        blockHash: buyTx.hash,
-        tokenId: post.nft.tokenId,
-        buyer: account,
-        signature: signature
-      };
-      const response = await postReq('/marketplace/verifysale', payload);
-      await fetchWagers();
-    } catch (err) {
-      alert(err);
+      await fetchNFTs();
+    } catch (e: any) {
+      alert(e.message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchWagers();
-  }, [pagination]);
+    fetchNFTs();
+  }, [pagination, account]);
 
   const onpaginationChange = (page: number, pageSize: number) => {
     setPagination({
@@ -84,10 +80,10 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className={styles.marketplace}>
+    <div className={styles.unlisted}>
       <Spin spinning={loading} indicator={antIcon}>
         <Typography.Title level={1} style={{ marginBottom: '50px' }}>
-          MarketPlace
+          Unlisted NFT
         </Typography.Title>
 
         <div className={styles.items}>
@@ -106,8 +102,7 @@ const Home: NextPage = () => {
                 }
                 actions={[
                   <Button onClick={() => buyNFT(post)} key="buy" type="primary">
-                    Buy NFT for{' '}
-                    {ethers.utils.formatEther(post.marketplace.price)}ETH
+                    List NFT for sale
                   </Button>
                 ]}
               >
@@ -140,4 +135,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Unlisted;

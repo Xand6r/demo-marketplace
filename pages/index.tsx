@@ -5,7 +5,7 @@ import Unconnected from 'components/unconnected';
 import { useWeb3React } from '@web3-react/core';
 
 const DEFAULT_TEXT =
-  'Please connect your wallet on the Goerli or Main network to proceed.';
+  'Please connect your wallet on the Sepolia network to proceed.';
 
 const Home: NextPage = () => {
   const { active } = useWeb3React();

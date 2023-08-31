@@ -1,12 +1,15 @@
 import type { AppProps } from 'next/app';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
   MoneyCollectOutlined
 } from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, theme } from 'antd';
+import { PieChartOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Button, Menu } from 'antd';
 
 const { Header: LHeader, Content, Footer, Sider } = Layout;
 
@@ -16,15 +19,43 @@ import { ethers } from 'ethers';
 import { Web3ReactProvider } from '@web3-react/core';
 import { toast, ToastContainer } from 'react-toastify';
 import '../styles/globals.scss';
+import { useRouter } from 'next/router';
 
 const DEFAULT_WAIT = 500;
+type MenuItem = Required<MenuProps>['items'][number];
 const reloadPage = () => {
   setTimeout(() => {
     window.location.reload();
   }, DEFAULT_WAIT);
 };
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: 'group'
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type
+  } as MenuItem;
+}
+
+const items: MenuItem[] = [
+  getItem('MarketPlace', '1', <MoneyCollectOutlined />),
+  getItem('Unlisted', '2', <MoneyCollectOutlined />)
+];
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const routes = {
+    1: '/',
+    2: '/unlisted'
+  };
+
   function getLibrary(provider: any) {
     const gottenProvider: any = new ethers.providers.Web3Provider(
       provider,
@@ -43,9 +74,20 @@ function MyApp({ Component, pageProps }: AppProps) {
     return gottenProvider;
   }
 
+  const changeRoute = (values: any) => {
+    const key: keyof typeof routes = values.key;
+    router.push(routes[key]);
+  };
+
   const {
     token: { colorBgContainer }
   } = theme.useToken();
+
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
 
   return (
     <>
@@ -58,42 +100,27 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/assets/metamask.svg" />
       </Head>
       <Web3ReactProvider getLibrary={getLibrary}>
-        <Header />
-
-        <Layout style={{ minHeight: '100vh' }}>
-          <Sider
-            breakpoint="lg"
-            collapsedWidth="0"
-            onBreakpoint={(broken) => {
-              console.log(broken);
-            }}
-            onCollapse={(collapsed, type) => {
-              console.log(collapsed, type);
+        <Header onClick={toggleCollapsed} />
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              minWidth: collapsed ? 'fit-content' : '250px'
             }}
           >
-            <div className="demo-logo-vertical" />
             <Menu
-              theme="dark"
+              defaultSelectedKeys={['1']}
+              defaultOpenKeys={['sub1']}
               mode="inline"
-              defaultSelectedKeys={['4']}
-              items={[MoneyCollectOutlined].map((icon, index) => ({
-                key: String(index + 1),
-                icon: React.createElement(icon),
-                label: `Marketplace`
-              }))}
+              theme="dark"
+              inlineCollapsed={collapsed}
+              items={items}
+              onClick={changeRoute}
             />
-          </Sider>
-          <Layout>
-            {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
-            {/* <Header /> */}
-
-            <Content>
-              <div className="layoutcontent">
-                <Component {...pageProps} />
-              </div>
-            </Content>
-          </Layout>
-        </Layout>
+          </div>
+          <section style={{ width: '100%' }}>
+            <Component {...pageProps} />
+          </section>
+        </div>
       </Web3ReactProvider>
       <ToastContainer />
     </>

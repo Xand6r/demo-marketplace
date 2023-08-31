@@ -1,0 +1,41 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract BetSellNFT",
+          "name": "_nftContract",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "NFTContract",
+      "outputs": [
+        {
+          "internalType": "contract BetSellNFT",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "buyNFT",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ]
+}
